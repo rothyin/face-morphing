@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        h1 {
+            text-align: center;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        h3 {
+            text-align: center;
+        }
+
+        h4 {
+            text-align: center;
+        }
+
+        body {
+            margin: auto;
+            width: 85%;
+        }
+
+        .row {
+            display: flex;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .column {
+            display: inline-block;
+        }
+
+        td {
+            text-align: center;
+        }
+
+        table {
+            margin: auto;
+        }
+    </style>
+    <title>Face Morphing</title>
+</head>
+
+
+<body>
+    <h1>Face Morphing</h1>
+    <h4>Roth Yin | rothyin@berkeley.edu</h4>
+
+    <br>
+    <br>
+
+    <h2>Defining Correspondences</h2>
+    <p> Use <code>cpselect</code> in Control Point Selection tool from MATLAB to define corresponding keypoints of the
+        two images.
+    </p>
+    <p> Use <code>scipy.spatial.Delaunay</code> on the average shape of the two images to compute the optimal
+        triangulations.</p>
+
+    <table>
+        <tr>
+            <th>original</th>
+            <th>keypoints</th>
+            <th>triangulations</th>
+        </tr>
+        <tr>
+            <td><img src="imga.jpg" width=33%></td>
+            <td><img src="imga_p.jpg" width=100%></td>
+            <td><img src="imga_t.jpg" width=100%></td>
+        </tr>
+        <tr>
+            <td><img src="imgb.jpg" width=33%></td>
+            <td><img src="imgb_p.jpg" width=100%></td>
+            <td><img src="imgb_t.jpg" width=100%></td>
+        </tr>
+    </table>
+
+    <p><small>The above images are from <a href="https://martinschoeller.com/SERIES/Close-Up/"> Martin Schoeller's Close
+                Up</a>.</small></p>
+
+    <br>
+    <br>
+    <br>
+
+
+    <h2>Computing the "Mid-way Face"</h2>
+
+    <p> Warp the shapes of both images to the average of them. </p>
+    <p> Compute the affine transformations from the shapes of the original images to the average shape. </p>
+    <p> Compute the inverses of those transformations. </p>
+    <p> For every pixel in the mid-way face, use these inverses to cross-dissolve (average) the colors.
+    <ul>
+        <li> Use <code>scipy.interpolate.RectBivariateSpline</code> to interpolate the result when the corresponding
+            color does not land on pixel.</li>
+    </ul>
+    </p>
+
+    <div class="row">
+        <div class="column">
+            <img src="imga.jpg" width=32%>
+            <figcaption>original A</figcaption>
+        </div>
+
+        <div class="column">
+            <img src="midface.jpg" width=32%>
+            <figcaption>mid-way Face</figcaption>
+        </div>
+
+        <div class="column">
+            <img src="imgb.jpg" width=32%>
+            <figcaption>original B</figcaption>
+        </div>
+    </div>
+
+
+    <br>
+    <br>
+    <br>
+
+
+    <h2>The Morph Sequence</h2>
+
+    <p> Produce a warp from Image A to Image B. The shapes and colors of intermediate frames are controled by separate
+        parameters. </p>
+
+    <div class="row">
+        <div class="column">
+            <img src="morph.gif" width=40%>
+        </div>
+    </div>
+
+
+    <br>
+    <br>
+    <br>
+
+
+    <h2>The "Mean face" of a population</h2>
+
+
+    <p> Use only the images of full frontal face, neutral expression, diffuse light. </p>
+    <p> Compute the average shape. </p>
+    <p> Morph all images to the average shape. </p>
+    <p> Examples: </p>
+
+    <table>
+        <tr>
+            <td>original</td>
+            <td><img src="ind1o.jpg" width=60%></td>
+            <td><img src="ind2o.jpg" width=60%></td>
+            <td><img src="ind3o.jpg" width=60%></td>
+        </tr>
+        <tr>
+            <td>morphed to the average shape</td>
+            <td><img src="ind1.jpg" width=60%></td>
+            <td><img src="ind2.jpg" width=60%></td>
+            <td><img src="ind3.jpg" width=60%></td>
+        </tr>
+    </table>
+
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div class="row">
+        <div class="column">
+            <img src="mean_face.jpg" width=50%>
+            <figcaption>average face</figcaption>
+        </div>
+    </div>
+
+    <br>
+    <br>
+    <br>
+
+    <div class="row">
+        <div class="column">
+            <img src="mes.jpg" width=80%>
+            <figcaption>new face</figcaption>
+        </div>
+
+        <div class="column">
+            <img src="me2mean.jpg" width=80%>
+            <figcaption>new face warped to average shape</figcaption>
+        </div>
+
+        <div class="column">
+            <img src="mean2me.jpg" width=80%>
+            <figcaption>average face warped to new face</figcaption>
+        </div>
+
+        <div class="column">
+            <img src="means.jpg" width=80%>
+            <figcaption>average face</figcaption>
+        </div>
+    </div>
+
+    <p> The forehead is not well processed since the dataset does not count for this region and the newly introduced
+        image does not present the face in the same angle. </p>
+
+    <br>
+
+
+    <p><small> The above dataset is from <a href="https://doi.org/10.1109/TMI.2003.817780"> M. B. Stegmann, B. K.
+                Ersboll and R. Larsen, "FAME-a flexible appearance modeling environment," in IEEE Transactions on
+                Medical Imaging, vol. 22, no. 10, pp. 1319-1331, Oct. 2003, doi: 10.1109/TMI.2003.817780. </a></small>
+    </p>
+
+    <br>
+    <br>
+    <br>
+
+
+    <h2>Caricatures: Extrapolating from the mean</h2>
+
+    <table>
+        <tr>
+            <td>hyper average</td>
+            <td>
+                <div class="column">
+                    <img src="caricature0.jpg" width=80%>
+                    <figcaption>0.5x difference over the mean</figcaption>
+                </div>
+            </td>
+            <td>
+                <div class="column">
+                    <img src="caricature1.jpg" width=80%>
+                    <figcaption>1x difference over the mean</figcaption>
+                </div>
+            </td>
+            <td>
+                <div class="column">
+                    <img src="caricature2.jpg" width=80%>
+                    <figcaption>2x difference over the mean</figcaption>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>anti average</td>
+            <td>
+                <div class="column">
+                    <img src="caricature3.jpg" width=80%>
+                    <figcaption>1.5x difference away from the mean</figcaption>
+                </div>
+            </td>
+            <td>
+                <div class="column">
+                    <img src="caricature4.jpg" width=80%>
+                    <figcaption>2x difference away from the mean</figcaption>
+                </div>
+            </td>
+            <td>
+                <div class="column">
+                    <img src="caricature5.jpg" width=80%>
+                    <figcaption>3x difference away from the mean</figcaption>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <p> These caricatures align with the actual situations. The dataset represents Nordic appearance. They generally
+        feature
+    <ul>
+        <li> thin nasal bridge </li>
+        <li> small ala nasi </li>
+        <li> round eyes </li>
+        <li> long forehead (as opposed to long chins) </li>
+        <li> thin lips </li>
+    </ul>
+    These can be accurately intepreted from the extrapolations.
+    </p>
+
+
+    <br>
+    <br>
+    <br>
+
+    <h3>
+        <span style="color: red">
+            Bells & Whistles (Extra Points) 1
+        </span>
+    </h3>
+
+    <p> Change gender. </p>
+
+    <div class="row">
+        <div class="column">
+            <img src="mes.jpg" width=80%>
+            <figcaption>base</figcaption>
+        </div>
+
+        <div class="column">
+            <img src="nordid.jpg" width=80%>
+            <figcaption>average female nordid</figcaption>
+        </div>
+
+        <div class="column">
+            <img src="female_shape.jpg" width=80%>
+            <figcaption>warped shape</figcaption>
+        </div>
+
+        <div class="column">
+            <img src="female_color.jpg" width=80%>
+            <figcaption>warped appearance</figcaption>
+        </div>
+
+        <div class="column">
+            <img src="female_both.jpg" width=80%>
+            <figcaption>morph both shape and color</figcaption>
+        </div>
+    </div>
+
+    <p><small>The average of the race above is from <a href="http://humanphenotypes.net/"> Human Phenotypes</a>.</small>
+    </p>
+
+    <br>
+    <br>
+    <br>
+
+    <h3>
+        <span style="color: red">
+            Bells & Whistles (Extra Points) 2
+        </span>
+    </h3>
+
+    <p> Change race. </p>
+
+    <div class="row">
+        <div class="column">
+            <img src="mes.jpg" width=80%>
+            <figcaption>base</figcaption>
+        </div>
+
+        <div class="column">
+            <img src="nilotid.jpg" width=80%>
+            <figcaption>average nilotid</figcaption>
+        </div>
+
+        <div class="column">
+            <img src="nilotid_shape.jpg" width=80%>
+            <figcaption>warped shape</figcaption>
+        </div>
+
+        <div class="column">
+            <img src="nilotid_color.jpg" width=80%>
+            <figcaption>warped appearance</figcaption>
+        </div>
+
+        <div class="column">
+            <img src="nilotid_both.jpg" width=80%>
+            <figcaption>morph both shape and color</figcaption>
+        </div>
+    </div>
+
+    <p><small>The average of the race above is from <a href="http://humanphenotypes.net/"> Human Phenotypes</a>.</small>
+    </p>
+
+
+    <h3>
+        <span style="color: red">
+            Bells & Whistles (Extra Points) 3
+        </span>
+    </h3>
+
+    <p> Lipsync demonstrating "Alea iacta est."</p>
+
+    <div class="row">
+        <div class="column">
+            <img src="lip/al.gif" width=100%>
+        </div>
+    </div>
+
+    <p><small>The footage of the above lipsync is from <a
+                href="https://www.reallusion.com/iclone/lipsync-animation.html"> Reallusion </a>.</small></p>
+
+
+</body>
+
+</html>
